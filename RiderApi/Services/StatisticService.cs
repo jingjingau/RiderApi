@@ -18,6 +18,12 @@ namespace RiderApi.Services
             _context = context;
         }
 
+        
+        public async Task<IEnumerable<Job>> GetJobsByRiderIdAsync(int riderId)
+        {
+            return await _context.Jobs.Where(t => t.RiderId == riderId).ToListAsync();
+        }
+
         //Get the statistics data for all riders
         public async Task<IEnumerable<Statistic>> GetRidersStatisticsAsync()
         {

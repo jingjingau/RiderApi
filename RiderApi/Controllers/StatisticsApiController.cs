@@ -28,5 +28,24 @@ namespace RiderApi.Controllers
             return await _service.GetRidersStatisticsAsync();
         }
 
+        // GET: api/StatisticsApi/GetJobsByRiderIdAsync/2
+        [HttpGet("[Action]/{riderId}")]
+        public async Task<IActionResult> GetJobsByRiderIdAsync(int riderId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            IEnumerable<Job> jobs = await _service.GetJobsByRiderIdAsync(riderId);
+
+            if (jobs == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(jobs);
+        }
+
     }
 }

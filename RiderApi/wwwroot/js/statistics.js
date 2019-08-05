@@ -27,7 +27,7 @@ function appendRowForTable(record) {
         "<td>" + record.firstName + "</td>" +
         "<td>" + record.lastName + "</td>" +
         "<td>" + (record.avgReviewScore).toFixed(2) + "</td>" +
-        "<td>" + (record.bestReviewScore).toFixed(2) + "</td>" +
+        "<td>" + (record.bestReviewScore) + "</td>" +
         "<td>" + record.reviewComment + "</td>" +
         "<td>" + (record.totalAvgReviewScore).toFixed(2)  + "</td>" +
         "</tr>";

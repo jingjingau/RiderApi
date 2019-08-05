@@ -8,6 +8,9 @@ namespace RiderApi.Services
 {
     public interface IStatisticService
     {
+        Task<IEnumerable<Job>> GetJobsByRiderIdAsync(int riderId);
+
         Task<IEnumerable<Statistic>> GetRidersStatisticsAsync();
     }
+
 }

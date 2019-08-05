@@ -1,9 +1,11 @@
-﻿using Moq;
+﻿using Microsoft.AspNetCore.Mvc;
+using Moq;
 using RiderApi.Controllers;
 using RiderApi.Models;
 using RiderApi.Services;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using Xunit;
 
@@ -60,6 +62,65 @@ namespace RiderApi.Tests
             var items = Assert.IsType<List<Statistic>>(okResult);
             Assert.Equal(3, items.Count);
 
+        }
+
+        [Fact]
+        public void GetJobsByRiderIdAsync_ExistingRiderIdPassed_ReturnsRightItem()
+        {
+            // Arrange
+            var rightRiderId = 2;
+
+            // arrange
+            var mock = new Mock<IStatisticService>();
+            var jobList = new List<Job>
+            {
+                new Job
+                {
+                    Id = 4,
+                    JobDateTime = DateTime.ParseExact("12/05/2016 13:20:00", "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture),
+                    RiderId = 2,
+                    ReviewScore = 580,
+                    ReviewComment = "Very Good",
+                    CompletedAt = "Flemington Racecourse"
+                },
+                new Job
+                {
+                    Id = 5,
+                    JobDateTime = DateTime.ParseExact("11/04/2017 15:20:00", "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture),
+                    RiderId = 2,
+                    ReviewScore = 680,
+                    ReviewComment = "Excellent",
+                    CompletedAt = "Flemington Racecourse"
+                }
+            };
+
+            mock.Setup(r => r.GetJobsByRiderIdAsync(rightRiderId)).ReturnsAsync(jobList);
+            var controller = new StatisticsApiController(mock.Object);
+
+            // act
+            var okResult = controller.GetJobsByRiderIdAsync(rightRiderId).Result as ObjectResult; ;
+
+            // Assert
+            List<Job> resultList = okResult.Value as List<Job>;
+
+            Assert.Equal(2, resultList.Count);
+            Assert.Equal(580, resultList[0].ReviewScore);
+        }
+
+        [Fact]
+        public void GetJobsByRiderIdAsync_RiderIdWithNoJobsPassed_ReturnsNotFoundResult()
+        {
+            // Arrange
+            var unknonwRiderId = 100;
+
+            // Act
+            var mock = new Mock<IStatisticService>();
+            mock.Setup(r => r.GetJobsByRiderIdAsync(unknonwRiderId)).ReturnsAsync(()=>null);
+            var controller = new StatisticsApiController(mock.Object);
+            var returnResult = controller.GetJobsByRiderIdAsync(unknonwRiderId).Result;
+
+            // Assert
+            Assert.IsType<NotFoundResult>(returnResult);
         }
 
     }

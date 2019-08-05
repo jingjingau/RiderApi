@@ -288,6 +288,13 @@ function appendRowForTableOfRider(rider) {
         "data-target='#modelRiders' " +
         "data-number='" + rowNumber + "'>" +
         "Edit</button>" +
+        "<button type='button' " +
+        "onclick='getJobs(this);' " +
+        "class='btn btn-link' " +
+        "data-toggle='modal' " +
+        "data-target='#modelJobs' " +
+        "data-id='" + rider.id + "'>" +
+        "Jobs</button>" +
         "<button type='button' class='btn btn-link' " +
         "onclick='deleteRider(this);' " +
         "data-number='" + rowNumber + "'" +
@@ -297,6 +304,50 @@ function appendRowForTableOfRider(rider) {
         "</tr>";
 
     $("#tableRidersList").append(row);
+}
+
+//Get Jobs for one rider
+function getJobs(ctl) {
+
+    // Get rider id from data- attribute
+    var id = $(ctl).data("id");
+
+    var titleString = "Jobs of Rider:" + id;
+    $("#jobsModalLabel").html(titleString);
+
+    // Need to clean the TableJobs's job list first 
+    $("#tableJobs  tr:not(:first)").remove("");
+
+    // Call Web API to get a list of Phone Numbers of this Customer
+    $.ajax({
+        url: "api/StatisticsApi/GetJobsByRiderIdAsync/" + id,
+        type: 'GET',
+        dataType: 'json',
+        success: function (data) {
+            $.each(data, function (i, item) {
+                appendRowForTableOfJobs(item);
+            }); //End of foreach Loop
+        },
+        error: function (request, message, error) {
+            if (request.status != 404)
+                handleException(request, message, error);
+        }
+    });
+}
+
+function appendRowForTableOfJobs(item) {
+    var rowNumber = $("#tableJobs").find("tr").length;
+    var row = "<tr>" +
+        "<td>" + rowNumber + "</td>" +
+        "<td>" + item.id + "</td>" +
+        "<td>" + item.jobDateTime + "</td>" +
+        "<td>" + item.riderId + "</td>" +
+        "<td>" + item.reviewScore + "</td>" +
+        "<td>" + item.reviewComment + "</td>" +
+        "<td>" + item.completedAt + "</td>" +
+        "</tr>";
+
+    $('#tableJobs').append(row);
 }
 
 function pad(n) {
