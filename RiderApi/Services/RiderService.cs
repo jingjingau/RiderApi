@@ -19,7 +19,8 @@ namespace RiderApi.Services
         public async Task<IEnumerable<Rider>> GetAllRidersAsync()
         {
             await EnsureDatabaseCreated();
-            return await _context.Riders.ToListAsync();
+            var riderList = await _context.Riders.ToListAsync();
+            return riderList.Select(x => { x.Jobs = null; return x; }).ToList();
         }
 
         public async Task<Rider> GetRiderAsync(int riderId)

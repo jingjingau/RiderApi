@@ -14,7 +14,7 @@ namespace RiderApi.Tests
     public class StatisticsApiControllerTest
     {
         [Fact]
-        public void GetRiders_WhenCalled_ReturnsAllItems()
+        public void GetStatistics_WhenCalled_ReturnsAllItems()
         {
             // arrange
             var mock = new Mock<IStatisticService>();
@@ -56,11 +56,29 @@ namespace RiderApi.Tests
             var controller = new StatisticsApiController(mock.Object);
 
             // act
-            var okResult = controller.GetStatistics().Result;
+            var okResult = controller.GetStatistics().Result as OkObjectResult;
 
             // Assert
-            var items = Assert.IsType<List<Statistic>>(okResult);
+            var items = Assert.IsType<List<Statistic>>(okResult.Value);
             Assert.Equal(3, items.Count);
+
+        }
+
+        [Fact]
+        public void GetStatistics_WhenCalled_ReturnsNotFound()
+        {
+            // arrange
+            var mock = new Mock<IStatisticService>();
+
+            mock.Setup(r => r.GetRidersStatisticsAsync()).ReturnsAsync(() => null);
+            var controller = new StatisticsApiController(mock.Object);
+
+            // act
+            var result = controller.GetStatistics().Result;
+
+            // Assert
+            var items = Assert.IsType<NotFoundResult>(result);
+
 
         }
 
@@ -98,7 +116,7 @@ namespace RiderApi.Tests
             var controller = new StatisticsApiController(mock.Object);
 
             // act
-            var okResult = controller.GetJobsByRiderIdAsync(rightRiderId).Result as ObjectResult; ;
+            var okResult = controller.GetJobsByRiderIdAsync(rightRiderId).Result as ObjectResult; 
 
             // Assert
             List<Job> resultList = okResult.Value as List<Job>;

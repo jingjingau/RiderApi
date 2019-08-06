@@ -28,6 +28,10 @@ namespace RiderApi.Services
         public async Task<IEnumerable<Statistic>> GetRidersStatisticsAsync()
         {
             await EnsureDatabaseCreated();
+
+            if (_context.Jobs.Count() == 0)
+                return null;
+
             var totalAvgReviewScore = _context.Jobs.Average(job => job.ReviewScore);
 
             var avgReviewScoreTable = (from j in _context.Jobs

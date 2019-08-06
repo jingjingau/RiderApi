@@ -55,10 +55,12 @@ namespace RiderApi.Tests
             var okResult = controller.GetRiders().Result;
 
             // Assert
+                                  
             var items = Assert.IsType<List<Rider>>(okResult);
             Assert.Equal(3, items.Count);
 
         }
+
 
         [Fact]
         public void GetRider_ExistingRiderIdPassed_ReturnsRightItem()

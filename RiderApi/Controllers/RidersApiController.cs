@@ -29,7 +29,7 @@ namespace RiderApi.Controllers
         [HttpGet]
         public async Task<IEnumerable<Rider>> GetRiders()
         {
-            return await _service.GetAllRidersAsync();
+            return  await _service.GetAllRidersAsync();
         }
 
         // GET: api/RidersApi/5

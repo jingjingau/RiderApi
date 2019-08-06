@@ -1,25 +1,36 @@
 ﻿$(document).ready(function () {
     $.ajaxSetup({ cache: false });
+    $("#tableRidersList  tr:not(:first)").remove("");
+    getAllRiders();
+});
+
+function getAllRiders() {
     $.ajax({
         type: "GET",
         url: "/api/RidersApi",
         contentType: "application/json; charset=utf-8",
-        dataType: "json",
+        dataType: "text",
         success: function (data) {
-          //  alert(JSON.stringify(data));
+            //alert(JSON.stringify(data));
+            try {
+                var output = JSON.parse(data);
+                $.each(output, function (i, item) {
 
-            $.each(data, function (i, item) {
-                appendRowForTableOfRider(item);
-            }); //End of foreach Loop
-           // console.log(data);
-        }, //End of AJAX Success function
+                    appendRowForTableOfRider(item);
+                }); 
+            } catch (e) {
+                alert("Output is not valid JSON: " + data);
+            }
+        },  
 
         error: function (request, message, error) {
+            alert(error);
+            alert(request.status);
             handleException(request, message, error);
         } //End of AJAX error function
 
     });
-});
+}
 
 // After the add new rider link is clicked
 function addRiderClick() {
@@ -143,6 +154,10 @@ function riderUpdateSuccess(rider, rowNo) {
 }
 
 function deleteRider(ctl) {
+
+    if (confirm("Are you sure to delete?") == false)
+        return false;
+
     var rowNo = $(ctl).data("number");
     var riderId = $(ctl).data("id");
     $.ajax({
@@ -158,11 +173,13 @@ function deleteRider(ctl) {
         }
     });
 
+    return true;
 }
 
 // Update the rider table list after deleting one rider
 function riderDeleteSuccess(rowNo) {
-    $("#tableRidersList tr").eq(rowNo).remove();
+    $("#tableRidersList  tr:not(:first)").remove("");
+    getAllRiders();
 }
 
 function validateRiderObject(rider) {
@@ -274,7 +291,7 @@ function appendRowForTableOfRider(rider) {
     var dateNew = pad(dateObj.getDate()) + "/" + pad(dateObj.getMonth() + 1) + "/" + dateObj.getFullYear();
 
     var row = "<tr>" +
-        "<td>" + rowNumber + "</td>" +
+        "<td class='rowno'>" + rowNumber + "</td>" +
         "<td>" + rider.id + "</td>" +
         "<td>" + rider.firstName + "</td>" +
         "<td>" + rider.lastName + "</td>" +
@@ -360,7 +377,9 @@ function handleException(request, message,
     error) {
     var msg = "";
     msg += "Code: " + request.status + "\n";
-    msg += "Text: " + request.statusText + "\n";
+    msg += "Status: " + request.statusText + "\n";
+    msg += "Message: " + message + "\n";
+    msg += "Error: " + error + "\n";
     if (request.responseJSON != null) {
         msg += "Message" +
             request.responseJSON.Message + "\n";

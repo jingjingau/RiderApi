@@ -11,7 +11,8 @@
             }); 
         },  
         error: function (request, message, error) {
-            handleException(request, message, error);
+            if (request.status != 404)
+                 handleException(request, message, error);
         } //End of AJAX error function
 
     });

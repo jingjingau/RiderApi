@@ -23,9 +23,13 @@ namespace RiderApi.Controllers
 
         // GET: api/StatisticsApi
         [HttpGet]
-        public async Task<IEnumerable<Statistic>> GetStatistics()
+        public async Task<IActionResult> GetStatistics()
         {
-            return await _service.GetRidersStatisticsAsync();
+            var statistics = await _service.GetRidersStatisticsAsync();
+            if (statistics == null)
+                return NotFound();
+            else
+                return Ok(statistics);
         }
 
         // GET: api/StatisticsApi/GetJobsByRiderIdAsync/2
